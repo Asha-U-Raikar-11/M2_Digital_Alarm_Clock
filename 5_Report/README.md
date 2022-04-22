@@ -166,6 +166,7 @@ The variable OCROA_going_down is manipulated inside the timer0 output compare in
 	PORTD ^= (1<<PORTD6);
 	return;
 }
+
 Here it is shown that the value of OCR0A increases and decreases periodically, changing the frequency very quickly.
 The values for OCR0A were choses to make the alarm sound to be strange and act as an alarm that the user would want to end quickly.
 
@@ -182,4 +183,5 @@ Turn off alarm
 # Conclusion
 
 #Thus, this is how our main system has been built up.
+
 #More and more knowledge involving the whole system has been gained with time and through more research.
