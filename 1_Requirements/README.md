@@ -6,9 +6,13 @@ frequency most prefer crystal based clock.We are going to connect a crystal to A
 Components:
 
 1.Atmel ATMEGA328 microcontroller
+
 2.MAX7221 7-segment 8 digit LED driver
+
 3.7-segmet LED display
+
 4.32.768kHz crystal oscillator
+
 5.Buttons, wires, battery, switch, etc.
 
 Detail Explaination:
