@@ -62,10 +62,15 @@ that controls the segment LED clock display, and displays the time.
 Functions:
 
 Here are the Functions and a description of them:
+
 void send_byte(int byte_of_data){
+
 	for (int i=0; i<8; i++, byte_of_data<<=1){
+	
 		PORTB &= ~(1<<PORTB5);    //Clock LOW
+
 		if (byte_of_data & 0x80){    //If most significant bit is high, 0x80 = 0b10000000
+		
 			PORTB |= (1<<PORTB3);    // MOSI HIGH
 		}
 		else {
@@ -74,11 +79,16 @@ void send_byte(int byte_of_data){
 		PORTB |= (1<<PORTB5);    //Clock HIGH
 	}
 }
-This function takes an 8-bit value as an argument. The clock line is pulled down. Next, if the most significant bit in the argument is 1, the MOSI pin if set high, otherwise it is set low. Then, the clock line is pulled low. The argument is left adjusted with the << operator, and the process repeats for all 8-bits. -NOTE: the argument could be of type uint8_t, but other variables may be required so that the 8-bit data types do not overflow. But, the current configuration works fine, and possible wasted clock cycles do not matter in this situation.
+This function takes an 8-bit value as an argument. The clock line is pulled down. Next, if the most significant bit in the argument is 1, the MOSI pin if set high, otherwise it is set low. Then, the clock line is pulled low. The argument is left adjusted with the << operator, and the process repeats for all 8-bits. -NOTE: the argument could be of type uint8_t, but other variables may be required so that the 8-bit data types do not overflow. But, the current configuration works fine, and possible wasted clock cycles do not matter in this situation. 
+
 void send_command(int address_byte, int data_byte){
+
 	PORTB &= ~(1<<PORTB2);    //CS LOW
+	
 	send_byte(address_byte);
+	
 	send_byte(data_byte);
+	
 	PORTB |= (1<<PORTB2);    //CS high
 }
 The CS pin is driven low. When the CS pin is in its active low state first the address byte is sent, then the data byte is sent. Then after the 2 bytes are transmitted the CS pin is pulled high and transmission is terminated.
@@ -89,20 +99,33 @@ This function sends the command the byte of data, 0x0F, to each digit on the seg
 Set Time
 
 void set_time(int *hours, int *min);
+
 This function sets the time for the alarm clock
+
 Inside the function the global variable time_value is set by calculating how many minutes past 12:00 A.M. there are for the time that was set.
+
 The arguments are pointers. This is because the values of the arguments will be used in the main function. The addresses of the arguments are the parameters of the function call, like this:
+
 set_time(&hours, &min);
+
 This is the pass by reference technique that allows for the arguments to be dereferenced and have their value changed.
+
 The values for hours and min are then used in main to display the time. If these variables were instead passed by value, there is a glitch in the display then the time is changed. Since hours and min are updated in main the display glitch is very brief, but still unpleasant to look at.
+
 NOTE: could make hours and min uint8_t types, but may need more variables to avoid overflow during math.
 
 Set Alarm
+
 void set_alarm(int *alarm_time_count, uint8_t *is_alarm_set);
+
 This function sets the time the alarm should go occur
+
 is_alarm_set is a variable that prevents the alarm to go off if an alarm has not been set
+
 alarm_time_count is the number of minutes after 12:00 A.M. that the alarm is set.
+
 The alarm goes off when the following condition is true in the code below:
+
 if ((time_count == alarm_time_count) && is_alarm_set == 1){
 …
 }
@@ -114,6 +137,7 @@ void turn_off_alarm(uint8_t *is_alarm_set);
 Simple function that turns off the alarm indicator LED, turns off the counter that produces the alarm sound, and makes is_alarm_set equal zero.
 
 How time is kept:
+
 A 32.768 kHz crystal oscillator is used as the clock source for an 8-bit counter. Timer2 is has the crystal as the clock source and a pre-scale of 128 so that it takes 32.768 ticks for timer 2 to overflow. The crystal has an accuracy of +- 20 parts per million. A timer over flow interrupt executed on one second intervals. -Here is the code for the timer overflow interrupt and a discussion of how what it is doing:
 
 ISR (TIMER2_OVF_vect)
